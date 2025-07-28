@@ -21,7 +21,7 @@ class TreeApp(App):
         background: $background;
     }
 
-    .container {
+    Container {
         border: round $accent;
         padding: 1;
         height: 100%;
@@ -41,10 +41,14 @@ class TreeApp(App):
 
     def compose(self) -> ComposeResult:
         jira_info = JiraInfo("Jira Info", id="jira_info")
+        tree_container = Container()
+        tree_container.border_title = "Jiras"
+        description_container = Container()
+        description_container.border_title = "Description"
         with Horizontal():
-            with Container(classes="container"):
+            with tree_container:
                 yield JiraTree("", jira_info, id="jira_tree")
-            with Container(classes="container"):
+            with description_container:
                 yield jira_info
         yield Footer()
 
@@ -58,6 +62,7 @@ class JiraInfo(Static):
                 f"Summary - {tui_jira.value.fields.summary}",
                 f"Status - {tui_jira.value.fields.status}",
                 f"Assignee - {tui_jira.value.fields.assignee}",
+                f"Description - {tui_jira.value.fields.description}",
             ]
         )
         self.update(text)

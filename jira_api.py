@@ -1,5 +1,6 @@
 """Some simple authentication examples."""
 
+from dataclasses import fields
 from jira import JIRA
 from jira.client import ResultList
 from jira.resources import Issue
@@ -49,3 +50,12 @@ def children(issue: Issue):
 
 def memorized_jira():
     return config["jiras"]
+
+
+def md(issue: Issue):
+    md = [
+        f"#{issue.fields.key} {issue.fields.summary}\n",
+        "## Description\n",
+        f"{issue.fields.description}\n",
+    ]
+    return "\n".join(md)
