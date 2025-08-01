@@ -39,3 +39,16 @@ class TuiState:
         tui_jira = TuiJira.from_issue(issue, child_jiras)
         self.jira_map[issue.key] = tui_jira
         return tui_jira
+
+
+def to_md(tui_jira: TuiJira):
+    issue = tui_jira.value
+    md = [
+        f"## {issue.key} {issue.fields.summary}",
+        f"Priority: [{issue.fields.priority}]\n",
+        f"Status: {issue.fields.status}\n",
+        f"Assignee: {issue.fields.assignee}\n",
+        "### Description",
+        f"{issue.fields.description}",
+    ]
+    return "\n".join(md)

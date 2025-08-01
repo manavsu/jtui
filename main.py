@@ -1,9 +1,10 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Tree, Footer, Static, Input, Button, Label
+from textual.widgets import Tree, Footer, Static, Input, Button, Label, Markdown
 from textual.containers import Horizontal, Container, Center, Vertical
 from textual.screen import ModalScreen
-from state import TuiState
+from state import TuiState, TuiJira, to_md
 from jira import Issue
+from jira_info import JiraInfo
 
 state = TuiState()
 print("State initialized with Jiras:", state.jiras)
@@ -53,21 +54,6 @@ class TreeApp(App):
         yield Footer()
 
 
-class JiraInfo(Static):
-    def update_content(self, tui_jira: Issue):
-        text = "\n".join(
-            [
-                f"Key - {tui_jira.value.key}",
-                f"Priority - {tui_jira.value.fields.priority}",
-                f"Summary - {tui_jira.value.fields.summary}",
-                f"Status - {tui_jira.value.fields.status}",
-                f"Assignee - {tui_jira.value.fields.assignee}",
-                f"Description - {tui_jira.value.fields.description}",
-            ]
-        )
-        self.update(text)
-
-
 class JiraTree(Tree):
     def __init__(self, label: str, jira_info: JiraInfo, id=None):
         super().__init__(label, id=id)
@@ -86,11 +72,18 @@ class JiraTree(Tree):
         if not event.node.label:
             return
         state.selected = event.node.label
-        self.jira_info.update_content(state.jira_map[str(state.selected)])
+        self.jira_info.update_content(
+            state.jira_map[str(state.selected).split(" ")[0].strip()]
+        )
         self.refresh()
 
     def add_jira(self, node, issue):
-        leaf = node.add_leaf(issue.value.key)
+        leaf = node.add_leaf(
+            issue.value.key
+            + " "
+            + f"[{issue.value.fields.status}] "
+            + issue.value.fields.summary
+        )
         if issue.children is not None:
             for child in issue.children:
                 self.add_jira(leaf, child)
@@ -127,3 +120,4 @@ class JiraInputScreen(ModalScreen[str]):
 
 if __name__ == "__main__":
     TreeApp().run()
+
