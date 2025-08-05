@@ -53,6 +53,9 @@ class TreeApp(App):
                 yield jira_info
         yield Footer()
 
+    def on_mount(self) -> None:
+        self.theme = "monokai"
+
 
 class JiraTree(Tree):
     def __init__(self, label: str, jira_info: JiraInfo, id=None):
@@ -120,4 +123,3 @@ class JiraInputScreen(ModalScreen[str]):
 
 if __name__ == "__main__":
     TreeApp().run()
-

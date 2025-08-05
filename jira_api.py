@@ -1,15 +1,17 @@
-# child_issues = jir.search_issues(jql, maxResults=False)
-# assert isinstance(child_issues, ResultList)
-#
-# for i, issue in enumerate(child_issues):
-#     print(
-#         i,
-#         issue.fields.priority,
-#         issue.fields.summary,
-#         issue.fields.status,
-#         issue.fields.assignee,
-#     )
-#
+from dataclasses import fields
+from jira import JIRA
+from jira.client import ResultList
+from jira.resources import Issue
+import tomllib
+
+# Some Authentication Methods
+with open("config.toml", "rb") as f:
+    config = tomllib.load(f)
+
+jir = JIRA(
+    config["url"],
+    token_auth=config["access_token"],
+)
 
 
 def issue(id: str):
@@ -38,4 +40,3 @@ def get_available_transitions(issue_key: str):
         print(f"  ID: {transition['id']}, Name: {transition['name']}")
 
     return transitions
-

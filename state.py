@@ -1,7 +1,7 @@
-from jira_api import issue, children, memorized_jira
+from jira_api import issue, children, memorized_jira, get_available_transitions
 from dataclasses import dataclass
 from jira import Issue
-from typing import List
+from typing import List, Any
 
 
 @dataclass
@@ -15,6 +15,10 @@ class TuiJira:
             value=issue,
             children=children,
         )
+
+    def get_available_trainsitions(self) -> Any:
+        """Get all available transitions for an issue."""
+        return get_available_transitions(self.value.key)
 
 
 class TuiState:
@@ -44,11 +48,11 @@ class TuiState:
 def to_md(tui_jira: TuiJira):
     issue = tui_jira.value
     md = [
-        f"## {issue.key} {issue.fields.summary}",
-        f"Priority: [{issue.fields.priority}]\n",
-        f"Status: {issue.fields.status}\n",
-        f"Assignee: {issue.fields.assignee}\n",
-        "### Description",
+        f"### {issue.key} {issue.fields.summary}",
+        f"Priority: {issue.fields.priority}  ",
+        f"Status: {issue.fields.status}  ",
+        f"Assignee: {issue.fields.assignee}  ",
+        "#### Description",
         f"{issue.fields.description}",
     ]
     return "\n".join(md)
