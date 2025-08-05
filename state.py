@@ -39,7 +39,10 @@ class TuiState:
         if child_issues is None:
             child_jiras = None
         else:
-            child_jiras = [self.build_jira(child) for child in child_issues]
+            child_jiras = sorted(
+                [self.build_jira(child) for child in child_issues],
+                key=lambda j: str(j.value.fields.status),
+            )
         tui_jira = TuiJira.from_issue(issue, child_jiras)
         self.jira_map[issue.key] = tui_jira
         return tui_jira
