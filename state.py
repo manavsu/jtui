@@ -21,6 +21,24 @@ class TuiJira:
         return get_available_transitions(self.value.key)
 
 
+def status_to_value(status):
+    match status:
+        case "Open":
+            return 0
+        case "In Progress":
+            return 1
+        case "In Queue":
+            return 2
+        case "In Progress":
+            return 3
+        case "Ready for Peer Review":
+            return 4
+        case "Closed":
+            return 5
+        case _:
+            return -1
+
+
 class TuiState:
     def __init__(self):
         self.jiras = []
@@ -41,7 +59,7 @@ class TuiState:
         else:
             child_jiras = sorted(
                 [self.build_jira(child) for child in child_issues],
-                key=lambda j: str(j.value.fields.status),
+                key=lambda j: status_to_value(str(j.value.fields.status)),
             )
         tui_jira = TuiJira.from_issue(issue, child_jiras)
         self.jira_map[issue.key] = tui_jira
